@@ -1,4 +1,0 @@
-{
-    "client": "cline",
-    "entry": "src/modules/code_mcp/code_mcp_client.py"
-}
