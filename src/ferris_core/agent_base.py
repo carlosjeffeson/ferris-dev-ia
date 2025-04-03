@@ -8,17 +8,18 @@ integrando Sequential Thinking, Think Tool Server e Desktop Commander.
 # -------------------
 # Imports Necessários
 # -------------------
-from autogen import AssistantAgent, UserProxyAgent
 import os
+import sys
 from dotenv import load_dotenv
 from pathlib import Path
-import sys
+from autogen import AssistantAgent, UserProxyAgent
 
 # -------------------
-# Configuração de Caminhos
+# Ajuste do sys.path para reconhecer /src como raiz dos módulos
 # -------------------
-# Garante que o /src está no sys.path para permitir imports absolutos
-sys.path.append(str(Path(__file__).resolve().parents[1]))
+base_dir = Path(__file__).resolve().parents[1]
+src_dir = base_dir / "src"
+sys.path.append(str(src_dir))
 
 # -------------------
 # Imports Internos do Projeto
@@ -29,14 +30,13 @@ from ferris_core import think_tool_server
 # -------------------
 # Carregamento do Ambiente (.env)
 # -------------------
-env_path = Path(__file__).resolve().parents[2] / ".env"
-load_dotenv(dotenv_path=str(env_path), encoding="utf-8", override=True)
+env_path = base_dir.parent / ".env"
+load_dotenv(dotenv_path=env_path, override=True)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 if not OPENAI_API_KEY:
     raise ValueError(f"❌ API Key não carregada! Verifique se o .env está em {env_path}")
-
 print("✅ API KEY carregada com sucesso.")
 
 # -------------------
@@ -69,18 +69,13 @@ def ferris_execute(task: str) -> str:
     str
         Plano e resultado da execução.
     """
-    # Etapa 1: Planejamento
     subtasks = think_tool_server.analyze_task(task)
     plan = think_tool_server.format_plan(subtasks)
-
-    # Etapa 2: Execução real via Desktop Commander
     result = think_tool_server.execute(task)
-
     return f"📋 Plano Gerado:\n{plan}\n\n💻 Resultado da Execução:\n{result}"
 
 # -------------------
 # Execução Direta (Teste)
 # -------------------
 if __name__ == "__main__":
-    # Exemplo de teste do Passo 8
     print(ferris_execute("echo Hello Ferris!"))
