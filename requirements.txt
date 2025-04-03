@@ -1,0 +1,6 @@
+openai
+autogen
+langgraph
+playwright
+pytest
+python-dotenv
